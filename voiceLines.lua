@@ -4,6 +4,10 @@ PLUGIN.name = "voiceLines V2.0"
 PLUGIN.author = "4illNation"
 PLUGIN.description = "Adds voice lines during convoiceLinesual situations."
 
+-- [Requirements]
+-- extrahl2rpvoices.lua:https://github.com/4illnation/lua
+-- hl2_ep1_male01_voices: https://steamcommunity.com/sharedfiles/filedetails/?id=3164508401
+
 -- DEVELOPER NOTES
 -- Current Version: VERSION 2.0
 
