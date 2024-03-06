@@ -53,7 +53,7 @@ local playerVoices = {
         {'incoming'}, -- [5]  Grenade receive
         {'shit2', 'shit'}, -- [6]  Fall
         {'help', 'no', "i'm hurt"}, -- [7]  PlayerHurt
-        {'oh no', 'no2'}, -- [8]  Fall
+        {'oh no', 'no2'}, -- [8]  This index is broken. Don't use it
         {'reload', 'reload2'}, -- [9]  Reload
         {'headcrabs', 'headcrabs2'}, -- [10] Headcrabs
         {'zombies', 'zombies2'}, -- [11] Zombies
@@ -302,13 +302,6 @@ local function detectPlayer(entityTable, detectionRadius, playerVoices, detectio
                                 elseif isCitizen(ply) then
                                     voiceLines = playerVoices.citizenVoices[11]
                                 end
-                            -- This is player detection for Combine NPCs. It is disabled for now.
-                            -- This is because I will be implementing an EyeTrace system for the Combine NPCs.
-                            -- Instead of a sphere detection system.
-                            -- elseif isEntityClass(currentEntity:GetClass(), entityTable.combines) then
-                            --     if isCitizen(ply) then
-                            --         voiceLines = playerVoices.citizenVoices[12]
-                            --     end
                             end
                             if voiceLines then
                                 sendVoiceLine(ply, 'y', voiceLines, handleCustomTimer, 1)
@@ -330,8 +323,6 @@ function PLUGIN:PlayerTick(ply)
     local grenadeRadius = 100
     local headcrabRadius = 200
     local zombieRadius = 300
-    -- Continuing disabled Combine detection.
-    --local combineRadius = 150
 
     for _, v in pairs(ents.GetAll()) do
         if isEntityClass(v:GetClass(), entityTable.grenades) then
@@ -340,8 +331,6 @@ function PLUGIN:PlayerTick(ply)
             detectPlayer(entityTable, headcrabRadius, playerVoices, headcrab_CurrentDetection)
         elseif isEntityClass(v:GetClass(), entityTable.zombies) then
             detectPlayer(entityTable, zombieRadius, playerVoices, zombie_CurrentDetection)
-        -- elseif isEntityClass(v:GetClass(), entityTable.combines) then
-        --     detectPlayer(entityTable, combineRadius, playerVoices, combine_CurrentDetection)
         end
     end
     weaponReload(ply, ply:GetActiveWeapon())
