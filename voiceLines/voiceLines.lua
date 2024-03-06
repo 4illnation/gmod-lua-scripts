@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 local PLUGIN = PLUGIN
 PLUGIN.schema = "HL2 RP"
 PLUGIN.name = "voiceLines V2.0"
@@ -653,5 +652,4 @@ function PLUGIN:PlayerTick(ply)
     weaponReload(ply, ply:GetActiveWeapon())
     invalidWeapons(ply)
     playerFall(ply)
->>>>>>> c7ba3f0c811e98991614e143796c611112bc0e7a
 end
