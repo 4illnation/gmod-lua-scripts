@@ -8,31 +8,7 @@ PLUGIN.description = "Adds voice lines during convoiceLinesual situations."
 -- extrahl2rpvoices.lua:https://github.com/4illnation/lua
 -- hl2_ep1_male01_voices: https://steamcommunity.com/sharedfiles/filedetails/?id=3164508401
 
--- DEVELOPER NOTES
--- Current Version: VERSION 2.0
-
--- This is a timer functionality from Version 2.0 that distributes individual timers for players.
--- It was used here but using it on its own does not work with Version 1.0 functionality.
-
---     if not playerTimers[ply] then
---         playerTimers[ply] = {}
---     end
---     if not playerTimers[ply][text] or CurTime() - playerTimers[ply][text] >= timer then
---         ix.chat.Send(ply, channel, text)
---         playerTimers[ply][text] = CurTime()
---     end
--- end
-
--- At the moment all the timers for all the players are synced on the server
--- This means that if a player sends a voiceline, all the other players will have to wait for the timer to expire.
--- This is not ideal and will be fixed in the future.
-
--- The /it system functionality will not be included in Version 2.0... This will just save time for the project.
--- I want to get a working V2.0 stable so that I can further enjoy the development of the plugin.
--- It was just getting in the way for right now.
-
--- You can change the timers for the voices in each function where the sendVoiceline function is called.
--- However doing so can throw the god-foresaken timer system out of sync. I wouldn't suggest doing it for now but feel free to experiment.
+-- Version: VERSION 2.1
 
 -- [NPC Classes]
 local entityTable = {
@@ -112,7 +88,8 @@ end
 local plyIsFalling
 local reloadFrame = {}
 local playerTimers = {}
-local lastVoiceLineTime = 0
+local newIndex = {}
+local lastIndex = {}
 local grenade_CurrentDetection = {}
 local grenade_PreviousDetection = {}
 local headcrab_CurrentDetection = {}
@@ -122,36 +99,29 @@ local zombie_PreviousDetection = {}
 local combine_CurrentDetection = {}
 local combine_PreviousDetection = {}
 
-local function sendVoiceLine(ply, channel, voiceLines, timerHandler, timerDuration)
-	if not isNoClipping(ply) then
-		if timerHandler(timerDuration) then
-			local lineToSend = voiceLines[1]
-			if #voiceLines > 1 then
-				local lastIndex = ply.LastVoiceIndex or 0
-				local newIndex
-				
-				repeat
-					newIndex = math.random(#voiceLines)
-				until newIndex ~= lastIndex
-				
-				lineToSend = voiceLines[newIndex]
-				ply.LastVoiceIndex = newIndex
-			end
-			ix.chat.Send(ply, channel, lineToSend)
-		end
-	end
+local function customTimerHandler(ply, timerDuration, voiceLines)
+    if not playerTimers[ply] then
+        playerTimers[ply] = { lastVoiceIndex = nil }
+    end
+
+    if not playerTimers[ply][voiceLines] or CurTime() - playerTimers[ply][voiceLines] >= timerDuration then
+        playerTimers[ply][voiceLines] = CurTime()
+        return true
+    end
+    return false
 end
 
-local function customTimerHandler(timerDuration)
-	if CurTime() - lastVoiceLineTime >= timerDuration then
-		lastVoiceLineTime = CurTime()
-		return true
-	end
-	return false
-end
+local function sendVoiceLine(ply, channel, voiceLines, timerDuration)
+    if customTimerHandler(ply, timerDuration, voiceLines) then
+        local lastIndex = playerTimers[ply].lastVoiceIndex
 
-local function handleCustomTimer(timerDuration)
-	return customTimerHandler(timerDuration)
+        repeat
+            newIndex = math.random(#voiceLines)
+        until newIndex ~= lastIndex
+
+        playerTimers[ply].lastVoiceIndex = newIndex
+        ix.chat.Send(ply, channel, voiceLines[newIndex])
+    end
 end
 
 function PLUGIN:OnNPCKilled(npc, attacker)
@@ -164,7 +134,7 @@ function PLUGIN:OnNPCKilled(npc, attacker)
 		voiceLines = playerVoices.citizenVoices[1]
 	end
     if voiceLines then
-	    sendVoiceLine(attacker, 'y', voiceLines, handleCustomTimer, 0)
+	    sendVoiceLine(attacker, 'y', voiceLines, 0)
     end
 end
 
@@ -181,7 +151,7 @@ function PLUGIN:PlayerHurt(victim, attacker)
         voiceLines = playerVoices.citizenVoices[2]
     end
     if voiceLines then
-        sendVoiceLine(victim, 'y', voiceLines, handleCustomTimer, 3)
+        sendVoiceLine(victim, 'y', voiceLines, 3)
     end
 end
 
@@ -198,7 +168,7 @@ function PLUGIN:PlayerDeath(victim, inflictor, attacker)
         voiceLines = playerVoices.citizenVoices[1]
     end
     if voiceLines then
-        sendVoiceLine(ply, 'y', voiceLines, handleCustomTimer, 0)
+        sendVoiceLine(ply, 'y', voiceLines, 0)
     end
 end
 
@@ -216,10 +186,10 @@ local function weaponReload(ply, currentWeapon)
             if ammoCount == 0 and reserveCount == 0 then return end
             if ply:IsCombine() and ammoCount == 0 and reserveCount > 0 then 
                 voiceLines = playerVoices.combineVoices[7]
-                sendVoiceLine(ply, 'y', voiceLines, handleCustomTimer, 5)
+                sendVoiceLine(ply, 'y', voiceLines, 5)
             elseif isCitizen(ply) and ammoCount == 0 and reserveCount > 0 then
                 voiceLines = playerVoices.citizenVoices[9]
-                sendVoiceLine(ply, 'y', voiceLines, handleCustomTimer, 5)
+                sendVoiceLine(ply, 'y', voiceLines, 5)
             end
             reloadFrame[ply] = true            
         end
@@ -256,7 +226,7 @@ local function playerFall(ply)
             voiceLines = playerVoices.citizenVoices[6]
         end
         plyIsFalling = nil
-        sendVoiceLine(ply, 'y', voiceLines, handleCustomTimer, 5)
+        sendVoiceLine(ply, 'y', voiceLines, 5)
     end
 end
 
@@ -304,7 +274,7 @@ local function detectPlayer(entityTable, detectionRadius, playerVoices, detectio
                                 end
                             end
                             if voiceLines then
-                                sendVoiceLine(ply, 'y', voiceLines, handleCustomTimer, 1)
+                                sendVoiceLine(ply, 'y', voiceLines, 1)
                             end
                             break
                         end
