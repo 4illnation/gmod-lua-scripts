@@ -10,6 +10,9 @@ PLUGIN.description = "Adds voice lines during convoiceLinesual situations."
 
 -- Version: VERSION 2.1
 
+-- To change the timer or the voice type for the voices, go down where the sendVoiceLine function is called and change the 4th argument.
+-- sendVoiceLine(ply, 'ic', voiceLines, x)
+
 -- [NPC Classes]
 local entityTable = {
     combines = {'npc_combine_s', 'npc_metropolice'},
