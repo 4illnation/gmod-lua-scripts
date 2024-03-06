@@ -63,7 +63,7 @@ end
 
 local function isCitizen(ply)
     if not IsValid(ply) then return end
-    return ply:Team() == FACTION_CITIZEN
+    return ply:Team() == FACTION_CITIZEN or ply:Team() == FACTION_ADMIN
 end
 
 local function isEntityClass(getClass, entityTable)
