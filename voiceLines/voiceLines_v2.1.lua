@@ -56,6 +56,20 @@ local playerVoices = {
     }
 }
 
+local playerTimers = {}
+local newIndex = {}
+local lastIndex = {}
+local plyIsFalling
+local reloadFrame = {}
+local grenade_CurrentDetection = {}
+local grenade_PreviousDetection = {}
+local headcrab_CurrentDetection = {}
+local headcrab_PreviousDetection = {}
+local zombie_CurrentDetection = {}
+local zombie_PreviousDetection = {}
+local combine_CurrentDetection = {}
+local combine_PreviousDetection = {}
+
 local function isNoClipping(ply)
     if not IsValid(ply) then return end
     return ply:GetMoveType() == MOVETYPE_NOCLIP
@@ -87,20 +101,6 @@ local function invalidWeapons(ply)
     end
     return false
 end
-
-local plyIsFalling
-local reloadFrame = {}
-local playerTimers = {}
-local newIndex = {}
-local lastIndex = {}
-local grenade_CurrentDetection = {}
-local grenade_PreviousDetection = {}
-local headcrab_CurrentDetection = {}
-local headcrab_PreviousDetection = {}
-local zombie_CurrentDetection = {}
-local zombie_PreviousDetection = {}
-local combine_CurrentDetection = {}
-local combine_PreviousDetection = {}
 
 local function customTimerHandler(ply, timerDuration, voiceLines)
     if not playerTimers[ply] then
