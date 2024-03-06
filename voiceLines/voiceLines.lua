@@ -306,3 +306,4 @@ function PLUGIN:PlayerTick(ply)
     weaponReload(ply, ply:GetActiveWeapon())
     invalidWeapons(ply)
     playerFall(ply)
+end
