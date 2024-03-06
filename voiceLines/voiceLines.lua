@@ -1,6 +1,6 @@
 local PLUGIN = PLUGIN
 PLUGIN.schema = "HL2 RP"
-PLUGIN.name = "voiceLines V2.0"
+PLUGIN.name = "voiceLines"
 PLUGIN.author = "4illNation"
 PLUGIN.description = "Adds voice lines during convoiceLinesual situations."
 
