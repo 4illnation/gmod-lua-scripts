@@ -277,7 +277,7 @@ local function detectPlayer(entityTable, detectionRadius, playerVoices, detectio
                                 end
                             end
                             if voiceLines then
-                                -- 10 - 15 here should be good.
+                                -- 10 - 20 here should be good.
                                 sendVoiceLine(ply, 'y', voiceLines, 15)
                             end
                             break
@@ -289,7 +289,11 @@ local function detectPlayer(entityTable, detectionRadius, playerVoices, detectio
     end
 end
 
--- Tick interval of 1 or 2 seconds should be good.
+-- tickInterval represents the amount of seconds the detection system will update.
+-- This account for CPU usage. Without it, the server's CPU will spike drastically
+-- for every NPC that's on the map. I wouldn't suggest deleting it.
+-- if you feel 2 seconds is too slow, 1 second should be okay.
+
 local lastTick = 0
 local tickInterval = 2
 
@@ -297,7 +301,7 @@ function PLUGIN:PlayerTick(ply)
 
     if CLIENT then return end
 
-    -- CPU Throttling
+    -- CPU Throttling Timer
     if CurTime() - lastTick < tickInterVal then
         return
     end
