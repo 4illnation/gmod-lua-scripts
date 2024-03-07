@@ -277,7 +277,8 @@ local function detectPlayer(entityTable, detectionRadius, playerVoices, detectio
                                 end
                             end
                             if voiceLines then
-                                sendVoiceLine(ply, 'y', voiceLines, 1)
+                                -- 10 - 15 here should be good.
+                                sendVoiceLine(ply, 'y', voiceLines, 15)
                             end
                             break
                         end
@@ -288,10 +289,20 @@ local function detectPlayer(entityTable, detectionRadius, playerVoices, detectio
     end
 end
 
+-- Tick interval of 1 or 2 seconds should be good.
+local lastTick = 0
+local tickInterval = 2
+
 function PLUGIN:PlayerTick(ply)
-    ply = ply or LocalPlayer()
 
     if CLIENT then return end
+
+    -- CPU Throttling
+    if CurTime() - lastTick < tickInterVal then
+        return
+    end
+
+    lastTick = CurTime()
 
     local grenadeRadius = 100
     local headcrabRadius = 200
