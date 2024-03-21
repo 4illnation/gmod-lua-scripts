@@ -302,7 +302,7 @@ function PLUGIN:PlayerTick(ply)
     if CLIENT then return end
 
     -- CPU Throttling Timer
-    if CurTime() - lastTick < tickInterVal then
+    if CurTime() - lastTick < tickInterval then
         return
     end
 
